@@ -334,7 +334,8 @@ performant.
 ## The laziness problem
 
 If we were writing our mutex for use with Javascript's async model, everything
-would be working fine! However, we're not, and everything is not fine...
+would be working fine! However, we're not, and everything is not fine... It's
+time to look at the problem I hinted at earlier on!
 
 A Javascript promise does not need to be "spawned" - it exists by itself and
 will run to completion without any prompting. However, a Rust future must be
@@ -369,7 +370,7 @@ There is also a third problem which is both more subtle and much nastier:
 
    ![](laziness3.svg)
 
-## Formalising the laziness problem
+## Understanding laziness and how it affects futures
 
 Why do these problems afflict `LockFuture`, but not other kinds of future?
 If we are writing a new kind of future, how do we know that it won't have the
@@ -431,7 +432,10 @@ the mutex in sequence.
 
 #### Advantages
 
-- Works nicely with CPU-bound tasks.
+- Works nicely with CPU-bound tasks. The mutex task can be scheduled to an executor
+  that specializes in having low latency, regardless of the executor used by the
+  calling code. Executors running CPU-bound tasks will generally have high latency
+  in comparison.
 - No rules for end-users to follow.
 - Very simple to implement.
 
@@ -530,9 +534,13 @@ impl<T: Send + 'static> AsyncMutex<T> {
 }
 ```
 
-## Actor model
-
 The solution we've ended up with has a lot of parallels with the actor model:
 instead of multiple tasks vying for access to a shared resource, we have a
 single task which owns its own state, and fairly and efficiently applies a
 sequence of mutations to that state in response to messages from other tasks.
+
+## Conclusion
+
+This is as far as I've got investigating possible mutex solutions. Perhaps
+you can think of some other ways to address the problems I laid out that
+come with different trade-offs!

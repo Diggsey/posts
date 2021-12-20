@@ -80,7 +80,7 @@ failure, and the database state has become corrupted!
 
 No problem; we have backups for a reason, and we spin up a fresh
 database instance and restore into it. We even have point-in-time
-restore, so we're not going to lose any data!
+restore, so we can restore to right before the hardware failure.
 
 However, even after restoring, we see some strange errors coming in.
 Backgrounds tasks trying to access records in the database that don't

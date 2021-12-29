@@ -123,11 +123,11 @@ The concepts in AgentDB are:
     The asynchronous nature of this approach means that there is no lock contention,
     and no transaction conflicts during normal operation.
 
-    As throughput increases, the efficiency of the workers also increase,
-    since multiple messages can be processed after only loading an agent's state
+    As throughput increases, the efficiency of the workers also increases,
+    since multiple messages can be processed after loading an agent's state only
     once.
 
-    Together, these should mean that our "big O" complexity is pretty optimal, we
+    Together, these should mean that our "big O" complexity is pretty optimal - we
     just might have some bigger constant factors than other solutions.
 
 - General purpose.

@@ -39,7 +39,7 @@ The problem is the additional complexity this has introduced to our
 codebase and deployment. We end up with lots of rules for what should
 and should not be done to avoid running into problems. A lot of code is
 dedicated to handling various failure modes, and our business logic has
-got harder to isolate and test independently.
+become harder to isolate and test independently.
 
 Everywhere we trigger a background job, we have to add extra
 columns to record the ID of that job so that when it completes, we
@@ -47,7 +47,7 @@ can match its result back up with the correct entity, and this
 all needs to be mocked out when under test.
 
 Finally, the routing and partitioning logic in our message queue is
-intricately tied to out database access patterns and updates to either
+intricately tied to our database access patterns and updates to either
 one can easily result in unexpected performance regressions.
 
 We have something that *works*. Eventually it might even *work well*. But
@@ -57,7 +57,7 @@ we're a long way from our nice simple CRUD architecture.
 
 People have been building these kinds of applications for a very long
 time. Why are the tools still so hard to use? Why do they fit together
-to poorly? I've thought about this a long time, and I believe the
+so poorly? I've thought about this for a long time, and I believe the
 fundamental reason for this complexity is the lack of a shared transactor.
 
 A transactor is a process that ensures transactions are either fully
@@ -76,10 +76,10 @@ between two transactors is a place where failures can and will occur.
 Any time there is communication between domains owned by different
 transactors, extra complexity is needed:
 
-- Automatic reties with backoff.
+- Automatic retries with backoff.
 - Handling of failures and timeouts.
 
-These things cannot be handled "generically". A true failure here (ie.
+These things cannot be handled "generically". A true failure here (i.e.
 one that cannot be retried) is something that eventually needs to be
 surfaced to a user somewhere. What that actually means is intrinsically
 tied to the business logic of the application.
@@ -92,11 +92,10 @@ error handling efficiently. Take a SQL database for example:
     - Can easily store the "outbox" in a table.
 - Cons:
     - Frequent updates to the "outbox" table are a bottleneck.
-    - "Watching" the "outbox" table for new rows may require
-        polling.
+    - "Watching" the "outbox" table for new rows may require polling.
 
 On the other hand, a message queue has this retry logic built in, but
-if we want to eg. find out how many tasks are "stuck", or get any
+if we want to e.g. find out how many tasks are "stuck", or get any
 insight into the state of the message queue that requires a
 non-trivial query, then the message queue likely won't support that.
 
@@ -117,7 +116,7 @@ In FoundationDB, an application will typically talk to higher level
 a SQL database, a message queue, etc. All the layers use the same
 transactor, so you can easily update a row and send a message, all in
 one atomic transaction. Furthermore, you can
-backup and restore the entire FoundationDB state in one go.
+backup and restore the entire FoundationDB's state in one go.
 
 The premise here is that useful layers can be built upon a
 shared key/value store, and that sharing a transactor is useful.

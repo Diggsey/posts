@@ -116,7 +116,7 @@ In FoundationDB, an application will typically talk to higher level
 a SQL database, a message queue, etc. All the layers use the same
 transactor, so you can easily update a row and send a message, all in
 one atomic transaction. Furthermore, you can
-backup and restore the entire FoundationDB's state in one go.
+backup and restore the entire FoundationDB state in one go.
 
 The premise here is that useful layers can be built upon a
 shared key/value store, and that sharing a transactor is useful.
